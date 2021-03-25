@@ -2,7 +2,6 @@ from tkinter import *
 import pandas
 import random
 
-BACKGROUND_COLOR = "#B1DDC6"
 current_card = {}
 to_learn = {}
 
@@ -17,39 +16,39 @@ else:
 
 def next_card():
     global current_card, flip_timer
-    window.after_cancel(flip_timer)
+    root.after_cancel(flip_timer)
     current_card = random.choice(to_learn)
-    canvas.itemconfig(card_word, text=current_card["CN"], font=('Arial', 200))
+    canvas.itemconfig(card_txt, text=current_card["CN"], font=('Arial', 200))
     canvas.itemconfig(card_background, image=card_front_img)
-    flip_timer = window.after(3000, func=flip_card)
+    flip_timer = root.after(3000, func=flip_card)
 
 
 def flip_card():
-    canvas.itemconfig(card_word, text=current_card["CN"] + '\n\n' + current_card["RU"].replace('; ', '\n'), font=('Arial', 22))
+    canvas.itemconfig(card_txt, text=current_card["CN"] + '\n\n' + current_card["RU"].replace('; ', '\n'),
+                      font=('Arial', 22))
     canvas.itemconfig(card_background, image=card_back_img)
 
 
 def is_known():
     to_learn.remove(current_card)
-    data = pandas.DataFrame(to_learn)
-    data.to_csv("words_to_learn.csv", index=False)
+    pandas.DataFrame(to_learn).to_csv("words_to_learn.csv", index=False)
     next_card()
 
 
-window = Tk()
-window.title("Learn Chinese Characters")
-window.iconbitmap('images/icon.ico')
-window.config(padx=50, pady=50, bg=BACKGROUND_COLOR)
-window.resizable(height=False, width=False)
+root = Tk()
+root.title("Learn Chinese Characters")
+root.iconbitmap('images/icon.ico')
+root.config(padx=50, pady=50, bg="#B1DDC6")
+root.resizable(height=False, width=False)
 
-flip_timer = window.after(3000, func=flip_card)
+flip_timer = root.after(3000, func=flip_card)
 
 canvas = Canvas(width=800, height=526)
 card_front_img = PhotoImage(file="images/card_front.png")
 card_back_img = PhotoImage(file="images/card_back.png")
 card_background = canvas.create_image(400, 263, image=card_front_img)
-card_word = canvas.create_text(400, 263, text="", font=('Arial', 120))
-canvas.config(bg=BACKGROUND_COLOR, highlightthickness=0)
+card_txt = canvas.create_text(400, 263, text="", font=('Arial', 120))
+canvas.config(bg="#B1DDC6", highlightthickness=0)
 canvas.grid(row=0, column=0, columnspan=2)
 
 cross_image = PhotoImage(file="images/wrong.png")
@@ -62,7 +61,4 @@ known_button.grid(row=1, column=1)
 
 next_card()
 
-window.mainloop()
-
-
-
+root.mainloop()
